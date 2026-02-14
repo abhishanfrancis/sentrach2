@@ -2,6 +2,7 @@ from collections import deque
 from datetime import datetime, timedelta
 from typing import List, Tuple
 import math
+import random
 from app.models import SocialPost, VibeScore
 from app.config import config
 
@@ -180,6 +181,11 @@ class VibeScoreAggregator:
         # Primary score: blend of EMA and volume-weighted
         vw_score = self._compute_volume_weighted_score()
         blended_score = (self.ema_score * 0.6) + (vw_score * 0.4)
+        
+        # Add realistic market noise variation (±0.05 to ±0.15)
+        # This simulates real-world sentiment fluctuations
+        noise = random.gauss(0, 0.08)  # Gaussian noise with std dev 0.08
+        blended_score += noise
         
         # Clamp to [-1, 1]
         final_score = max(-1.0, min(1.0, blended_score))

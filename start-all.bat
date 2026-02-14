@@ -12,7 +12,6 @@ timeout /t 2 /nobreak > nul
 :: Start Hardhat Node (local blockchain)
 echo [1/4] Starting Hardhat Node...
 start "Hardhat Node" cmd /k "cd /d %~dp0contracts && npx hardhat node"
-start "Hardhat Node" cmd /k "cd /d %~dp0contracts && npx hardhat node"
 
 :: Wait for Hardhat to fully start
 echo Waiting for Hardhat node to start...

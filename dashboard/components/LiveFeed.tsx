@@ -8,8 +8,11 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 interface Article {
   id: string
+  title: string
   text: string
   score: number
+  source: string
+  url: string
   timestamp: string
 }
 
@@ -28,9 +31,12 @@ export default function LiveFeed() {
       
       // Transform API data
       const transformedArticles: Article[] = data.articles.map((article: any, index: number) => ({
-        id: `article-${index}-${Date.now()}`,
+        id: `article-${index}-${article.timestamp}`,
+        title: article.title || '',
         text: article.text,
         score: article.score,
+        source: article.source || 'Unknown',
+        url: article.url || '',
         timestamp: article.timestamp,
       }))
       
@@ -47,8 +53,8 @@ export default function LiveFeed() {
     // Fetch immediately
     fetchArticles()
     
-    // Refresh every 60 seconds
-    const interval = setInterval(fetchArticles, 60000)
+    // Refresh every 25 seconds
+    const interval = setInterval(fetchArticles, 25000)
     
     return () => clearInterval(interval)
   }, [fetchArticles])
@@ -102,14 +108,17 @@ export default function LiveFeed() {
         >
           <AnimatePresence mode="popLayout">
             {articles.slice(0, 12).map((article, index) => (
-              <motion.div
+              <motion.a
                 key={article.id}
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 layout
                 initial={{ opacity: 0, scale: 0.8, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className={`p-4 rounded-xl border ${getScoreColor(article.score)}`}
+                className={`block p-4 rounded-xl border ${getScoreColor(article.score)} hover:scale-105 transition-transform cursor-pointer`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className={`text-xs px-2 py-1 rounded-full ${getScoreBadgeColor(article.score)}`}>
@@ -119,10 +128,13 @@ export default function LiveFeed() {
                     {article.score > 0 ? '+' : ''}{article.score.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-sm text-gray-300 line-clamp-3">
-                  {article.text}
+                <p className="text-sm text-white font-medium line-clamp-2 mb-1">
+                  {article.title || article.text}
                 </p>
-              </motion.div>
+                <p className="text-xs text-gray-500">
+                  {article.source}
+                </p>
+              </motion.a>
             ))}
           </AnimatePresence>
         </div>

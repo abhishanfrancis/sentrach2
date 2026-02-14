@@ -105,7 +105,12 @@ async def news_sentiment_task():
                 for article, (score, label) in zip(articles, sentiments):
                     aggregator.add_article(
                         text=article.text,
-                        score=score
+                        score=score,
+                        title=article.title,
+                        source=article.source,
+                        url=article.url,
+                        image_url=article.image_url,
+                        timestamp=article.published_at
                     )
                 
                 # Compute new vibe score
@@ -179,6 +184,18 @@ async def lifespan(app: FastAPI):
     task = asyncio.create_task(news_sentiment_task())
     
     logger.info("✅ Server ready!")
+    logger.info("=" * 50)
+    logger.info("📊 API Endpoints:")
+    logger.info("   /vibe       - Current vibe score")
+    logger.info("   /coins      - Multi-coin sentiment")
+    logger.info("   /heatmap    - Coin heatmap data")
+    logger.info("   /market     - Fear & Greed Index")
+    logger.info("   /social     - Social media sentiment")
+    logger.info("   /predict    - Sentiment predictions")
+    logger.info("   /indicators - Technical indicators")
+    logger.info("   /alerts     - Signal history")
+    logger.info("   /status     - System health")
+    logger.info("=" * 50)
     
     yield
     
@@ -196,8 +213,8 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="Tokenized Sentiment Oracle",
-    description="Real-time crypto sentiment analysis from news",
-    version="2.0.0",
+    description="Real-time crypto sentiment analysis with ML predictions, multi-coin tracking, and social sentiment",
+    version="3.0.0",
     lifespan=lifespan
 )
 
@@ -276,8 +293,12 @@ async def get_articles():
     
     for article_sentiment in aggregator.current_articles:
         articles.append({
+            "title": article_sentiment.title,
             "text": article_sentiment.text[:200] + "..." if len(article_sentiment.text) > 200 else article_sentiment.text,
             "score": article_sentiment.score,
+            "source": article_sentiment.source,
+            "url": article_sentiment.url,
+            "image_url": article_sentiment.image_url,
             "timestamp": article_sentiment.timestamp.isoformat()
         })
     

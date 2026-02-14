@@ -25,6 +25,8 @@ class Article:
     text: str  # Combined title + description
     published_at: datetime
     source: str
+    url: str = ""
+    image_url: str = ""
 
 
 class AsyncNewsFetcher:
@@ -191,7 +193,9 @@ class AsyncNewsFetcher:
                 description=description,
                 text=text,
                 published_at=published,
-                source=item.get("source", {}).get("name", "Unknown")
+                source=item.get("source", {}).get("name", "Unknown"),
+                url=item.get("url", ""),
+                image_url=item.get("urlToImage", "")
             ))
         
         return articles

@@ -240,7 +240,7 @@ class SocialSentimentAggregator:
     
     def get_combined_sentiment(self) -> dict:
         """Get weighted combined sentiment from all platforms."""
-        weights = {"twitter": 0.5, "reddit": 0.35, "discord": 0.15}
+        weights = {"twitter": 0.55, "reddit": 0.25, "discord": 0.20}
         
         total_weight = 0
         weighted_sentiment = 0

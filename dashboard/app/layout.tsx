@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { FloatingParticles, AmbientGlow, GridOverlay } from '@/components/ParticleEffects'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,10 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} animated-gradient min-h-screen`}>
         {/* Background effects */}
-        <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-neon-cyan/20 rounded-full blur-3xl" />
-        </div>
+        <GridOverlay />
+        <AmbientGlow />
+        <FloatingParticles count={25} />
         
         <div className="relative z-10">
           {children}

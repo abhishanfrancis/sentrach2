@@ -52,7 +52,7 @@ export function AlertNotification({ alerts, onDismiss }: AlertNotificationProps)
   };
 
   const dismissAlert = (timestamp: string) => {
-    setDismissed(prev => new Set([...prev, timestamp]));
+    setDismissed(prev => new Set(Array.from(prev).concat(timestamp)));
   };
 
   const formatTime = (timestamp: string) => {

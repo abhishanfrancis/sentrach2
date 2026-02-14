@@ -31,6 +31,10 @@ class ArticleSentiment:
     text: str
     score: float  # -1 to +1
     timestamp: datetime
+    title: str = ""
+    source: str = ""
+    url: str = ""
+    image_url: str = ""
 
 
 class VibeAggregator:
@@ -64,12 +68,25 @@ class VibeAggregator:
         self.current_articles = articles
         self._cached_result = None  # Invalidate cache
     
-    def add_article(self, text: str, score: float) -> None:
+    def add_article(
+        self, 
+        text: str, 
+        score: float,
+        title: str = "",
+        source: str = "",
+        url: str = "",
+        image_url: str = "",
+        timestamp: datetime = None
+    ) -> None:
         """Add a single article sentiment."""
         self.current_articles.append(ArticleSentiment(
             text=text,
             score=score,
-            timestamp=datetime.utcnow()
+            timestamp=timestamp or datetime.utcnow(),
+            title=title,
+            source=source,
+            url=url,
+            image_url=image_url
         ))
         self._cached_result = None
     

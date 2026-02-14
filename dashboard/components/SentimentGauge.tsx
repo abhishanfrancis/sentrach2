@@ -2,7 +2,7 @@
 
 import { motion, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, Zap } from 'lucide-react'
 
 interface SentimentGaugeProps {
   score: number
@@ -34,6 +34,12 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
     return 'text-neon-orange'
   }
   
+  const getGlowClass = () => {
+    if (score > 0.3) return 'pulse-glow-green'
+    if (score < -0.3) return 'pulse-glow-red'
+    return 'pulse-glow'
+  }
+  
   const getLabel = () => {
     if (score > 0.4) return '🚀 Very Bullish'
     if (score > 0.2) return '📈 Bullish'
@@ -48,12 +54,44 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
   const trendColor = trend === 'UP' ? 'text-neon-green' : trend === 'DOWN' ? 'text-neon-red' : 'text-neon-orange'
 
   return (
-    <div className="glass-card p-6 h-full">
-      <h2 className="text-lg font-semibold text-gray-300 mb-6">Community Vibe Score</h2>
+    <div className={`glass-card p-6 h-full relative overflow-hidden hover-lift ${getGlowClass()}`}>
+      {/* Animated background accent */}
+      <div className="absolute inset-0 opacity-30">
+        <div 
+          className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl"
+          style={{
+            background: score > 0 
+              ? 'radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, transparent 70%)' 
+              : score < 0 
+                ? 'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%)',
+            animation: 'ambientPulse1 4s ease-in-out infinite'
+          }}
+        />
+      </div>
       
-      {/* Gauge */}
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-gray-300">Community Vibe Score</h2>
+          <div className="flex items-center gap-1 text-xs text-purple-400">
+            <Zap className="w-3 h-3" />
+            <span>LIVE</span>
+            <span className="live-dot ml-1" />
+          </div>
+        </div>
+      
+      {/* Gauge with glow ring */}
       <div className="relative w-full aspect-[2/1] mb-6">
-        <svg viewBox="0 0 200 100" className="w-full h-full overflow-visible">
+        {/* Rotating glow effect */}
+        <div 
+          className="absolute inset-[-20%] rounded-full opacity-20 blur-2xl"
+          style={{
+            background: 'conic-gradient(from 180deg, transparent, var(--neon-purple), var(--neon-cyan), transparent)',
+            animation: 'spin 10s linear infinite'
+          }}
+        />
+        
+        <svg viewBox="0 0 200 100" className="w-full h-full overflow-visible relative z-10">
           {/* Background arc */}
           <defs>
             <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -62,13 +100,32 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
               <stop offset="100%" stopColor="#22c55e" />
             </linearGradient>
             <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
+            <filter id="strongGlow">
+              <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
+          
+          {/* Outer glow track */}
+          <path
+            d="M 20 90 A 80 80 0 0 1 180 90"
+            fill="none"
+            stroke="url(#gaugeGradient)"
+            strokeWidth="16"
+            strokeLinecap="round"
+            opacity="0.2"
+            filter="url(#strongGlow)"
+          />
           
           {/* Track */}
           <path
@@ -89,12 +146,24 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
             filter="url(#glow)"
           />
           
-          {/* Needle */}
+          {/* Needle with glow */}
           <motion.g
             animate={{ rotate: rotation }}
             transition={{ type: "spring", stiffness: 60, damping: 15 }}
             style={{ transformOrigin: '100px 90px' }}
           >
+            {/* Needle glow */}
+            <line
+              x1="100"
+              y1="90"
+              x2="100"
+              y2="30"
+              stroke="white"
+              strokeWidth="6"
+              strokeLinecap="round"
+              opacity="0.3"
+              filter="url(#glow)"
+            />
             <line
               x1="100"
               y1="90"
@@ -104,6 +173,7 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
               strokeWidth="3"
               strokeLinecap="round"
             />
+            <circle cx="100" cy="90" r="10" fill="white" opacity="0.3" filter="url(#glow)" />
             <circle cx="100" cy="90" r="8" fill="white" />
           </motion.g>
           
@@ -119,13 +189,28 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
         <motion.div
           className={`text-6xl font-bold ${getScoreColor()}`}
           key={score}
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
+          initial={{ scale: 1.1, filter: 'blur(4px)' }}
+          animate={{ scale: 1, filter: 'blur(0px)' }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          style={{
+            textShadow: score > 0.3 
+              ? '0 0 30px rgba(34, 197, 94, 0.5)' 
+              : score < -0.3 
+                ? '0 0 30px rgba(239, 68, 68, 0.5)'
+                : '0 0 30px rgba(168, 85, 247, 0.5)'
+          }}
         >
           {score >= 0 ? '+' : ''}<AnimatedNumber value={score} />
         </motion.div>
         
-        <div className="text-xl text-gray-300">{getLabel()}</div>
+        <motion.div 
+          className="text-xl text-gray-300"
+          key={getLabel()}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {getLabel()}
+        </motion.div>
         
         {/* Trend indicator */}
         <div className={`flex items-center justify-center gap-2 ${trendColor}`}>
@@ -140,14 +225,17 @@ export default function SentimentGauge({ score, confidence, trend }: SentimentGa
           <span>Confidence</span>
           <span><AnimatedNumber value={confidence} decimals={0} />%</span>
         </div>
-        <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
+        <div className="h-2 bg-dark-700/50 rounded-full overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20" />
           <motion.div
-            className="h-full bg-gradient-to-r from-neon-purple to-neon-cyan"
+            className="h-full bg-gradient-to-r from-neon-purple to-neon-cyan relative z-10"
             initial={{ width: 0 }}
             animate={{ width: `${confidence}%` }}
             transition={{ duration: 0.5 }}
+            style={{ boxShadow: '0 0 10px rgba(168, 85, 247, 0.5)' }}
           />
         </div>
+      </div>
       </div>
     </div>
   )
