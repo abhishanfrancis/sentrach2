@@ -1,0 +1,15 @@
+export { default as Header } from './Header'
+export { default as SentimentGauge } from './SentimentGauge'
+export { default as TrendChart } from './TrendChart'
+export { default as LiveFeed } from './LiveFeed'
+export { default as RiskIndicator } from './RiskIndicator'
+export { default as ChainStatus } from './ChainStatus'
+export { default as StatsGrid } from './StatsGrid'
+
+// New features
+export { CoinHeatmap } from './CoinHeatmap'
+export { FearGreedIndex } from './FearGreedIndex'
+export { SocialFeed } from './SocialFeed'
+export { PredictionCard } from './PredictionCard'
+export { WalletConnect } from './WalletConnect'
+export { AlertNotification, AlertBanner } from './AlertNotification'

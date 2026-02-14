@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokenized Sentiment Oracle</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <h1>Tokenized Sentiment Oracle</h1>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot" id="connectionStatus"></span>
+                <span id="connectionText">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            <!-- Vibe Score Card -->
+            <section class="card vibe-card">
+                <h2>Community Vibe Score</h2>
+                <div class="vibe-score-container">
+                    <div class="vibe-gauge">
+                        <svg viewBox="0 0 200 100" class="gauge-svg">
+                            <defs>
+                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#ff4757"/>
+                                    <stop offset="50%" style="stop-color:#ffa502"/>
+                                    <stop offset="100%" style="stop-color:#2ed573"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 20 90 A 80 80 0 0 1 180 90" 
+                                  fill="none" 
+                                  stroke="rgba(255,255,255,0.1)" 
+                                  stroke-width="15"
+                                  stroke-linecap="round"/>
+                            <path id="gaugeProgress" 
+                                  d="M 20 90 A 80 80 0 0 1 180 90" 
+                                  fill="none" 
+                                  stroke="url(#gaugeGradient)" 
+                                  stroke-width="15"
+                                  stroke-linecap="round"
+                                  stroke-dasharray="251.3"
+                                  stroke-dashoffset="125.65"/>
+                            <circle id="gaugeNeedle" cx="100" cy="90" r="8" fill="#fff"/>
+                        </svg>
+                    </div>
+                    <div class="vibe-value">
+                        <span class="score-number" id="vibeScore">0.00</span>
+                        <span class="score-label" id="vibeLabel">Loading...</span>
+                    </div>
+                </div>
+                <div class="vibe-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="confidence">0%</span>
+                        <span class="stat-label">Confidence</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="volumeIndex">1.0x</span>
+                        <span class="stat-label">Volume</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="trendDirection">--</span>
+                        <span class="stat-label">Trend</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="postCount">0</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Card -->
+            <section class="card chart-card">
+                <h2>Sentiment Timeline</h2>
+                <div class="chart-container">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Live Feed -->
+            <section class="card feed-card">
+                <h2>Live Sentiment Feed</h2>
+                <div class="feed-container" id="feedContainer">
+                    <div class="feed-placeholder">Waiting for posts...</div>
+                </div>
+            </section>
+
+            <!-- Blockchain Card -->
+            <section class="card blockchain-card">
+                <h2>Blockchain Oracle</h2>
+                <div class="chain-info">
+                    <div class="chain-stat">
+                        <span class="chain-label">On-Chain Score</span>
+                        <span class="chain-value" id="chainScore">--</span>
+                    </div>
+                    <div class="chain-stat">
+                        <span class="chain-label">Last TX</span>
+                        <span class="chain-value chain-hash" id="lastTxHash">--</span>
+                    </div>
+                </div>
+                <button class="push-button" id="pushButton" onclick="pushToChain()">
+                    <span class="button-icon">⛓️</span>
+                    Push to Blockchain
+                </button>
+                <div class="tx-status" id="txStatus"></div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with 💜 for Hackathon 2026 | Powered by HuggingFace + Web3</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
